@@ -1,4 +1,10 @@
-// 1.20.1	2024-10-12T17:20:43.4659861	Registries
+// 1.20.1	2024-10-13T15:08:06.9039628	Registries
+e7f574babc08136d6caee5bf8d3e3f4088ecf468 data/examplemod/forge/biome_modifier/debug.json
 9176d0b45d9c43f20c4dd28a4f6fceea974a17cf data/examplemod/forge/biome_modifier/ice_spike.json
+8c796155d5e6a38a827720a893da878a78bee4a8 data/examplemod/forge/biome_modifier/volcano.json
+d7e16b04f007259b9019c8782cccab6b3e763ce2 data/examplemod/worldgen/configured_feature/debug.json
 fa86f020ceeb2faf488ddd0359b25978c7a9fa2a data/examplemod/worldgen/configured_feature/ice_spike.json
+25cbf27e96ecacf8db2e3996f4270600b52acf1e data/examplemod/worldgen/configured_feature/volcano.json
+08fae787cfb1e6e4d5aed47c1b2e33ca3cbfdbf8 data/examplemod/worldgen/placed_feature/debug.json
 6527d3a7f4e82370c04ddd1e4eb159f4120bcd8c data/examplemod/worldgen/placed_feature/ice_spike.json
+2f09207e8400a74fbf96870084275c1dfb3d802e data/examplemod/worldgen/placed_feature/volcano.json

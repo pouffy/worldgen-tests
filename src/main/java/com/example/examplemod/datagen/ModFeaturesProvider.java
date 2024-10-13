@@ -25,6 +25,8 @@ public class ModFeaturesProvider {
     public static class ConfiguredFeatures {
         public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> ctx) {
             ctx.register(ModFeatures.ICE_SPIKE_CONFIGURED, new ConfiguredFeature<>(ModFeatures.ICE_SPIKE.get(), new NoneFeatureConfiguration()));
+            ctx.register(ModFeatures.VOLCANO_CONFIGURED, new ConfiguredFeature<>(ModFeatures.VOLCANO.get(), new NoneFeatureConfiguration()));
+            ctx.register(ModFeatures.DEBUG_CONFIGURED, new ConfiguredFeature<>(ModFeatures.DEBUG.get(), new NoneFeatureConfiguration()));
         }
     }
 
@@ -37,6 +39,20 @@ public class ModFeaturesProvider {
                             BiomeFilter.biome()
                     )
             ));
+            ctx.register(ModFeatures.VOLCANO_PLACED, new PlacedFeature(ctx.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(ModFeatures.VOLCANO_CONFIGURED),
+                    List.of(
+                            RarityFilter.onAverageOnceEvery(10),
+                            HeightRangePlacement.of(UniformHeight.of(VerticalAnchor.absolute(100), VerticalAnchor.absolute(320))),
+                            BiomeFilter.biome()
+                    )
+            ));
+            ctx.register(ModFeatures.DEBUG_PLACED, new PlacedFeature(ctx.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(ModFeatures.DEBUG_CONFIGURED),
+                    List.of(
+                            RarityFilter.onAverageOnceEvery(10),
+                            HeightRangePlacement.of(UniformHeight.of(VerticalAnchor.absolute(100), VerticalAnchor.absolute(320))),
+                            BiomeFilter.biome()
+                    )
+            ));
         }
     }
 
@@ -44,10 +60,21 @@ public class ModFeaturesProvider {
         public static void bootstrap(BootstapContext<BiomeModifier> ctx) {
             final HolderGetter<PlacedFeature> featureRegistry = ctx.lookup(Registries.PLACED_FEATURE);
             final HolderGetter<Biome> biomeRegistry = ctx.lookup(Registries.BIOME);
-
             ctx.register(ModFeatures.ICE_SPIKE_MODIFIER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                             biomeRegistry.getOrThrow(Tags.Biomes.IS_MOUNTAIN),
                             HolderSet.direct(featureRegistry.getOrThrow(ModFeatures.ICE_SPIKE_PLACED)),
+                            GenerationStep.Decoration.SURFACE_STRUCTURES
+                    )
+            );
+            ctx.register(ModFeatures.VOLCANO_MODIFIER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                            biomeRegistry.getOrThrow(Tags.Biomes.IS_SWAMP),
+                            HolderSet.direct(featureRegistry.getOrThrow(ModFeatures.VOLCANO_PLACED)),
+                            GenerationStep.Decoration.SURFACE_STRUCTURES
+                    )
+            );
+            ctx.register(ModFeatures.DEBUG_MODIFIER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                            biomeRegistry.getOrThrow(Tags.Biomes.IS_MOUNTAIN),
+                            HolderSet.direct(featureRegistry.getOrThrow(ModFeatures.DEBUG_PLACED)),
                             GenerationStep.Decoration.SURFACE_STRUCTURES
                     )
             );

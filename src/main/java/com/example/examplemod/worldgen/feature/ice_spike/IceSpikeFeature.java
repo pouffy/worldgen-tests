@@ -26,9 +26,9 @@ public class IceSpikeFeature extends Feature<NoneFeatureConfiguration> {
         RandomSource randomsource = context.random();
         BlockPos pos = context.origin();
 
-        boolean large = true;  // Increased size
-        int tipMin = (int) ((large ? 75 : 60) * 0.8);  // Increased minimum height
-        int tipRand = (int) ((large ? 95 : 75) * 0.6); // Increased maximum height
+        boolean large = true;
+        int tipMin = (int) ((large ? 75 : 60) * 0.8);
+        int tipRand = (int) ((large ? 95 : 75) * 0.6);
         int radiusMin = large ? 7 : 3;
         int radiusRand = large ? 4 : 1;
 
@@ -36,7 +36,7 @@ public class IceSpikeFeature extends Feature<NoneFeatureConfiguration> {
         int topX = worldgenlevel.getRandom().nextInt(tip) - tip / 2;
         int topZ = worldgenlevel.getRandom().nextInt(tip) - tip / 2;
 
-        int tipHeight = (int) (tip * 0.87);  // Keep the height adjustment
+        int tipHeight = (int) (tip * 0.87);
 
         int radius = radiusMin + worldgenlevel.getRandom().nextInt(radiusRand);
         Vec3 to = new Vec3(pos.getX() + topX, pos.getY() + tipHeight, pos.getZ() + topZ);
@@ -83,7 +83,7 @@ public class IceSpikeFeature extends Feature<NoneFeatureConfiguration> {
                         }
 
                         // Use a smaller vertical step
-                        current = current.add(per.x * 0.5, per.y * 0.2, per.z * 0.5);  // Adjust the vertical factor
+                        current = current.add(per.x * 0.5, per.y * 0.2, per.z * 0.5);
                     }
                 }
             }
