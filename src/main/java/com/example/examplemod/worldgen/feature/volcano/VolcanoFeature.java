@@ -34,6 +34,9 @@ public class VolcanoFeature extends Feature<NoneFeatureConfiguration> {
         int radius = radiusMin + worldgenlevel.getRandom().nextInt(radiusRand);
         Vec3 tipPosition = new Vec3(pos.getX(), pos.getY() + tipHeight, pos.getZ());
 
+        double slopeVariation = 0.1; // Slight randomness in slopes
+
+        // Create the volcano top-down with irregularity and smoothing
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 double fromCenter = Math.sqrt(x * x + z * z);
@@ -43,31 +46,33 @@ public class VolcanoFeature extends Feature<NoneFeatureConfiguration> {
                     Vec3 current = from;
 
                     double distance = from.distanceTo(tipPosition);
+                    double heightVariance = 1.0 + randomsource.nextDouble() * slopeVariation;
 
+                    // Traverse from base to tip with height variance
                     for (double i = 0; i < distance; i += 0.5) {
                         BlockPos targetPos = posFromVec(current);
-                        if (i > 0 && i < distance / 1.3) {
-                            worldgenlevel.setBlock(targetPos, Blocks.BLACKSTONE.defaultBlockState(), 3);
+                        if (i > 0 && i < distance / 1.3 * heightVariance) {
+                            // Adding block variation for natural look
+                            if (randomsource.nextBoolean()) {
+                                worldgenlevel.setBlock(targetPos, Blocks.BLACKSTONE.defaultBlockState(), 3);
+                            } else {
+                                worldgenlevel.setBlock(targetPos, Blocks.BASALT.defaultBlockState(), 3);
+                            }
                         } else {
+                            // Create lava at the crater
                             createLavaPit(targetPos, worldgenlevel);
                             worldgenlevel.setBlock(reversePos(targetPos), Blocks.AIR.defaultBlockState(), 3);
                         }
-
-                        current = current.add(per.x * 0.5, per.y * 0.5, per.z * 0.5); // Scale the movement by a smaller amount
+                        current = current.add(per.x * 0.5, per.y * 0.5, per.z * 0.5); // Move along the slope
                     }
                 }
             }
         }
 
-        boolean steepSlope = randomsource.nextBoolean();
+        // Smoothing and noise for the base
         for (int depth = 0; depth < 120; depth++) {
-            int currentRadius = radius;
-
-            if (steepSlope) {
-                currentRadius += depth;
-            } else {
-                currentRadius += depth / 2;
-            }
+            double noise = generateNoise(randomsource, depth); // Adding noise for natural transition
+            int currentRadius = (int) (radius + (depth * 0.5 * noise)); // Gradual smoothing with noise
 
             for (int angle = 0; angle < 360; angle += 15) {
                 int dx = (int) (currentRadius * Math.cos(Math.toRadians(angle)));
@@ -76,7 +81,11 @@ public class VolcanoFeature extends Feature<NoneFeatureConfiguration> {
                 BlockPos newPos = pos.below(depth).offset(dx, 0, dz);
 
                 if (worldgenlevel.isEmptyBlock(newPos)) {
-                    worldgenlevel.setBlock(newPos, Blocks.BLACKSTONE.defaultBlockState(), 3);
+                    if (randomsource.nextBoolean()) {
+                        worldgenlevel.setBlock(newPos, Blocks.BLACKSTONE.defaultBlockState(), 3);
+                    } else {
+                        worldgenlevel.setBlock(newPos, Blocks.BASALT.defaultBlockState(), 3);
+                    }
                 }
             }
 
@@ -86,14 +95,16 @@ public class VolcanoFeature extends Feature<NoneFeatureConfiguration> {
                     if (fromCenter <= currentRadius) {
                         BlockPos targetPos = pos.below(depth).offset(x, 0, z);
                         if (worldgenlevel.isEmptyBlock(targetPos)) {
-                            worldgenlevel.setBlock(targetPos, Blocks.BLACKSTONE.defaultBlockState(), 3);
+                            if (randomsource.nextBoolean()) {
+                                worldgenlevel.setBlock(targetPos, Blocks.BLACKSTONE.defaultBlockState(), 3);
+                            } else {
+                                worldgenlevel.setBlock(targetPos, Blocks.BASALT.defaultBlockState(), 3);
+                            }
                         }
                     }
                 }
             }
         }
-
-
 
         return true;
     }
@@ -114,12 +125,17 @@ public class VolcanoFeature extends Feature<NoneFeatureConfiguration> {
                     double fromCenter = Math.sqrt(x * x + z * z);
                     if (fromCenter <= radius) {
                         BlockPos targetPos = origin.offset(x, y, z);
-                        if (worldgenlevel.getBlockState(targetPos).getBlock() == Blocks.BLACKSTONE) {
-                            worldgenlevel.setBlock(targetPos, Blocks.EMERALD_BLOCK.defaultBlockState(), 3);
+                        if (worldgenlevel.getBlockState(targetPos).getBlock() == Blocks.BLACKSTONE || worldgenlevel.getBlockState(targetPos).getBlock() == Blocks.BASALT) {
+                            worldgenlevel.setBlock(targetPos, Blocks.LAVA.defaultBlockState(), 3);
                         }
                     }
                 }
             }
         }
+    }
+
+    // Noise function to add randomness to the edges
+    public double generateNoise(RandomSource random, int depth) {
+        return 1.0 + (random.nextDouble() - 0.5) * 0.2 * Math.log(depth + 1);
     }
 }
